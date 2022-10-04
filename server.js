@@ -1,32 +1,46 @@
 const express = require("express");
 const app = express();
 const morgan = require("morgan");
-const products = require("./data/Products.js");
 const dotenv = require("dotenv");
 const connectDatabase = require("./config/MongoDB");
+const ImportData = require("./ImportData.js");
+const productRoute = require("./routes/ProductRoutes");
+const { errorHandler, notFound } = require("./middleware/Errors");
 // Config .env
 dotenv.config();
+// Connect DB
 connectDatabase();
+
+// Stringify JSON
 app.use(express.json());
 app.use(
   express.urlencoded({
     extended: true,
   })
 );
+// LOAD API
+app.use("/api/import", ImportData);
+app.use("/api/products", productRoute);
 
-// Load Product from server
-app.get("/api/products", (req, res) => {
-  res.json(products);
-});
-
-// Single Product from server
-app.get("/api/products/:id", (req, res) => {
-  const product = products.find((p) => p._id === req.params.id);
-  res.json(product);
-});
+// Error Handler
+app.use(notFound);
+app.use(errorHandler);
 
 app.use(morgan("combined"));
 const PORT = process.env.PORT || 1000;
+
 app.listen(PORT, () => {
   console.log(`server ${PORT} is connected...`);
 });
+
+// TESTING
+// Load Product from server
+// app.get("/api/products", (req, res) => {
+//   res.json(products);
+// });
+
+// Single Product from server
+// app.get("/api/products/:id", (req, res) => {
+//   const product = products.find((p) => p._id === req.params.id);
+//   res.json(product);
+// });
