@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-
+const bcrypt = require("bcryptjs");
 const userSchema = mongoose.Schema(
   {
     name: {
@@ -25,6 +25,20 @@ const userSchema = mongoose.Schema(
     timestamps: true,
   }
 );
+//
+// * Using normal function in case of catching API, DO NOT USE Arrow Function.
+userSchema.methods.matchPassword = async function (enterPassword) {
+  return await bcrypt.compare(enterPassword, this.password);
+};
+
+// Register
+userSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) {
+    next();
+  }
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
+});
 
 const User = mongoose.model("User", userSchema);
 

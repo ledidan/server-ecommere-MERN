@@ -5,6 +5,7 @@ const dotenv = require("dotenv");
 const connectDatabase = require("./config/MongoDB");
 const ImportData = require("./ImportData.js");
 const productRoute = require("./routes/ProductRoutes");
+const userRouter = require("./routes/UserRoutes");
 const { errorHandler, notFound } = require("./middleware/Errors");
 // Config .env
 dotenv.config();
@@ -21,7 +22,7 @@ app.use(
 // LOAD API
 app.use("/api/import", ImportData);
 app.use("/api/products", productRoute);
-
+app.use("/api/users", userRouter);
 // Error Handler
 app.use(notFound);
 app.use(errorHandler);
