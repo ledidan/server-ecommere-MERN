@@ -100,7 +100,7 @@ userRouter.put(
       if (req.body.password) {
         user.password = req.body.password;
       }
-      const updateUser = await User.save();
+      const updateUser = await user.save();
       res.json({
         _id: updateUser._id,
         name: updateUser.name,
