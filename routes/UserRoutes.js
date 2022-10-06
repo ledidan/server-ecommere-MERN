@@ -4,7 +4,8 @@ const User = require("../models/UserModel");
 const generateToken = require("../utils/generateToken");
 const userRouter = express.Router();
 const protect = require("../middleware/Auth");
-// GET ALL PRODUCT
+
+// [POST] GET ALL USERS
 userRouter.post(
   "/login",
   asyncHandler(async (req, res) => {
@@ -28,7 +29,7 @@ userRouter.post(
   })
 );
 
-// REGISTER
+// [POST] REGISTER
 userRouter.post(
   "/",
   asyncHandler(async (req, res) => {
@@ -63,7 +64,7 @@ userRouter.post(
   })
 );
 
-// PROFILE
+// [GET] PROFILE
 userRouter.get(
   "/profile",
   protect,
@@ -77,6 +78,36 @@ userRouter.get(
         email: user.email,
         isAdmin: user.isAdmin,
         createdAt: user.createdAt,
+      });
+    } else {
+      res.status(401);
+      throw new Error("User Not Found");
+    }
+  })
+);
+
+// [PUT] UPDATE PROFILE
+userRouter.put(
+  "/profile",
+  protect,
+  asyncHandler(async (req, res) => {
+    const user = await User.findById(req.user._id);
+
+    if (user) {
+      user.name = req.body.name || user.name;
+      user.email = req.body.email || user.email;
+
+      if (req.body.password) {
+        user.password = req.body.password;
+      }
+      const updateUser = await User.save();
+      res.json({
+        _id: updateUser._id,
+        name: updateUser.name,
+        email: updateUser.email,
+        isAdmin: updateUser.isAdmin,
+        createdAt: updateUser.createdAt,
+        token: generateToken(updateUser._id),
       });
     } else {
       res.status(401);
