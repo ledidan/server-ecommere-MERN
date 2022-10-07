@@ -2,20 +2,22 @@ const express = require("express");
 const app = express();
 const morgan = require("morgan");
 const dotenv = require("dotenv");
+const bodyParser = require("body-parser");
 const connectDatabase = require("./config/MongoDB");
 const ImportData = require("./ImportData.js");
 const productRoute = require("./routes/ProductRoutes");
 const userRouter = require("./routes/UserRoutes");
 const { errorHandler, notFound } = require("./middleware/Errors");
+const orderRouter = require("./routes/OrderRoutes");
 // Config .env
 dotenv.config();
 // Connect DB
 connectDatabase();
 
 // Stringify JSON
-app.use(express.json());
+app.use(bodyParser.json());
 app.use(
-  express.urlencoded({
+  bodyParser.urlencoded({
     extended: true,
   })
 );
@@ -23,6 +25,7 @@ app.use(
 app.use("/api/import", ImportData);
 app.use("/api/products", productRoute);
 app.use("/api/users", userRouter);
+app.use("/api/orders", orderRouter);
 // Error Handler
 app.use(notFound);
 app.use(errorHandler);
