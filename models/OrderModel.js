@@ -4,6 +4,7 @@ const orderSchema = mongoose.Schema(
   {
     user: {
       type: mongoose.Schema.Types.ObjectId,
+      required: true,
       ref: "User",
     },
     orderItems: [
@@ -61,6 +62,11 @@ const orderSchema = mongoose.Schema(
       email_address: { type: String },
     },
     taxPrice: {
+      type: Number,
+      required: true,
+      default: 0.0,
+    },
+    itemsPrice: {
       type: Number,
       required: true,
       default: 0.0,
