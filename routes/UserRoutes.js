@@ -1,12 +1,14 @@
 const express = require("express");
 const userRouter = express.Router();
-const protect = require("../middleware/Auth");
+const { protect, admin } = require("../middleware/Auth");
 const {
   userAuth,
   userRegister,
   getUserProfile,
   updateUserProfile,
+  getAllUsers,
 } = require("../controllers/UserController");
+
 // [POST] GET ALL USERS
 userRouter.post("/login", userAuth);
 
@@ -18,5 +20,8 @@ userRouter.get("/profile", protect, getUserProfile);
 
 // [PUT] UPDATE PROFILE
 userRouter.put("/profile", protect, updateUserProfile);
+
+// [GET] GET ALL USERS
+userRouter.get("/", protect, admin, getAllUsers);
 
 module.exports = userRouter;

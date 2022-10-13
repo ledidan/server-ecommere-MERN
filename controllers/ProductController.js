@@ -24,6 +24,31 @@ const getAllProduct = asyncHandler(async (req, res) => {
   res.json({ products, page, pages: Math.ceil(count / pageSize) });
 });
 
+// @desc    ADMIN | GET ALL PRODUCT WITHOUT SEARCH AND PAGINATION
+// @route   GET /api/products/
+// @access  Public
+
+const getAllProductByAdmin = asyncHandler(async (req, res) => {
+  const products = await Product.find({}).sort({ id: -1 });
+
+  res.json(products);
+});
+
+// @desc    ADMIN | DELETE PRODUCT BY ID
+// @route   DELETE /api/products/:id
+// @access  Private
+
+const deleteProductByAdmin = asyncHandler(async (req, res) => {
+  const product = await Product.findById(req.params.id);
+  if (product) {
+    await product.remove();
+    res.json({ message: "Product deleted" });
+  } else {
+    res.status(404);
+    throw new Error("Product not Found");
+  }
+});
+
 // @desc    Get ID Single Product
 // @route   GET /api/products/:id
 // @access  Public
@@ -79,4 +104,10 @@ const createProductReview = asyncHandler(async (req, res) => {
   }
 });
 
-module.exports = { getAllProduct, getSingleProduct, createProductReview };
+module.exports = {
+  getAllProduct,
+  getSingleProduct,
+  createProductReview,
+  getAllProductByAdmin,
+  deleteProductByAdmin,
+};
