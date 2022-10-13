@@ -7,6 +7,8 @@ const {
   createProductReview,
   getAllProductByAdmin,
   deleteProductByAdmin,
+  createProductByAdmin,
+  updateProductByAdmin,
 } = require("../controllers/ProductController");
 
 // [GET] ALL PRODUCT
@@ -15,8 +17,14 @@ productRoute.get("/", getAllProduct);
 // [GET] GET ALL PRODUCT BY ADMIN
 productRoute.get("/all", protect, admin, getAllProductByAdmin);
 
-// [DELETE] DELETE PRODUCT BY ID
-productRoute.delete("/:id", protect, admin, deleteProductByAdmin);
+// [PUT] EDIT PRODUCT BY ADMIN
+productRoute.patch("/:id/update", protect, admin, updateProductByAdmin);
+// [DELETE] DELETE PRODUCT ID BY ADMIN
+productRoute.delete("/:id/delete", protect, admin, deleteProductByAdmin);
+
+// [POST] CREATE USER BY ADMIN
+productRoute.post("/create", protect, admin, createProductByAdmin);
+
 // [GET] SINGLE PRODUCT
 productRoute.get("/:id", getSingleProduct);
 

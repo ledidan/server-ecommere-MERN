@@ -26,7 +26,7 @@ const getAllProduct = asyncHandler(async (req, res) => {
 
 // @desc    ADMIN | GET ALL PRODUCT WITHOUT SEARCH AND PAGINATION
 // @route   GET /api/products/
-// @access  Public
+// @access  Private
 
 const getAllProductByAdmin = asyncHandler(async (req, res) => {
   const products = await Product.find({}).sort({ id: -1 });
@@ -46,6 +46,59 @@ const deleteProductByAdmin = asyncHandler(async (req, res) => {
   } else {
     res.status(404);
     throw new Error("Product not Found");
+  }
+});
+
+// @desc    ADMIN | CREATE PRODUCT BY ID
+// @route   POST /api/products/create
+// @access  Private
+const createProductByAdmin = asyncHandler(async (req, res) => {
+  // Declare Object need to be created
+  const { name, price, description, image, countInStock } = req.body;
+
+  // ? Check Exist Product
+  const productExist = await Product.findOne({ name });
+
+  if (productExist) {
+    res.status(400);
+    throw new Error("Product name already existed");
+  } else {
+    // Create New Value from Model
+    const product = new Product({
+      name,
+      price,
+      description,
+      image,
+      countInStock,
+    });
+    if (product) {
+      const createProduct = await product.save();
+      res.status(201).json(createProduct);
+    } else {
+      res.status(400);
+      throw new Error("Invalid Product");
+    }
+  }
+});
+
+const updateProductByAdmin = asyncHandler(async (req, res) => {
+  const { name, price, description, image, countInStock } = req.body;
+
+  const product = await Product.findById(req.params.id);
+
+  if (product) {
+    // * Update by any object
+    product.name = name || product.name;
+    product.price = price || product.price;
+    product.description = description || product.description;
+    product.image = image || product.image;
+    product.countInStock = countInStock || product.countInStock;
+
+    const updateProduct = await product.save();
+    res.status(201).json(updateProduct);
+  } else {
+    res.status(400);
+    throw new Error("Product Not Found");
   }
 });
 
@@ -110,4 +163,6 @@ module.exports = {
   createProductReview,
   getAllProductByAdmin,
   deleteProductByAdmin,
+  createProductByAdmin,
+  updateProductByAdmin,
 };
