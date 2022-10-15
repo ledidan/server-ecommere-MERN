@@ -14,16 +14,17 @@ const {
 // [GET] ALL PRODUCT
 productRoute.get("/", getAllProduct);
 
-// [GET] GET ALL PRODUCT BY ADMIN
+// ?[GET] GET ALL PRODUCT BY ADMIN
 productRoute.get("/all", protect, admin, getAllProductByAdmin);
 
-// [PUT] EDIT PRODUCT BY ADMIN
-productRoute.patch("/:id/update", protect, admin, updateProductByAdmin);
-// [DELETE] DELETE PRODUCT ID BY ADMIN
+// ?[DELETE] DELETE PRODUCT ID BY ADMIN
 productRoute.delete("/:id/delete", protect, admin, deleteProductByAdmin);
 
-// [POST] CREATE USER BY ADMIN
+// ?[POST] CREATE PRODUCT BY ADMIN
 productRoute.post("/create", protect, admin, createProductByAdmin);
+
+// ?[PUT] GET EDIT PRODUCT ID PAGE BY ADMIN
+productRoute.put("/:id", protect, admin, updateProductByAdmin);
 
 // [GET] SINGLE PRODUCT
 productRoute.get("/:id", getSingleProduct);

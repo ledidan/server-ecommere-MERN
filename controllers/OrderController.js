@@ -53,6 +53,17 @@ const getOrderById = asyncHandler(async (req, res) => {
   }
 });
 
+// @desc    Get All Order By Admin
+// @route   GET /api/orders/all
+// @access  Private
+
+const getAllOrderByAdmin = asyncHandler(async (req, res) => {
+  const orders = await Order.find({})
+    .sort({ _id: -1 })
+    .populate("user", "id name email");
+  res.json(orders);
+});
+
 // @desc    update order is paid & not paid
 // @route   PUT /api/orders/:id/pay
 // @access  Private
@@ -87,4 +98,10 @@ const getOrderByUser = asyncHandler(async (req, res) => {
   res.json(order);
 });
 
-module.exports = { orderCreate, getOrderById, updateOrderPaid, getOrderByUser };
+module.exports = {
+  orderCreate,
+  getOrderById,
+  updateOrderPaid,
+  getOrderByUser,
+  getAllOrderByAdmin,
+};
