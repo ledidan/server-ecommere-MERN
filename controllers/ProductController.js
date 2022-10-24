@@ -17,16 +17,17 @@ const getAllProduct = asyncHandler(async (req, res) => {
       }
     : {};
   const count = await Product.countDocuments({ ...keyword });
+  const productId = await Product.findById(req.params.id).exec();
   const products = await Product.find({ ...keyword })
     .limit(pageSize)
     .skip(pageSize * (page - 1))
     .sort({ _id: -1 });
-  res.json({ products, page, pages: Math.ceil(count / pageSize) });
+  res.json({ productId, products, page, pages: Math.ceil(count / pageSize) });
 });
 
-// @desc    ADMIN | GET ALL PRODUCT WITHOUT SEARCH AND PAGINATION
-// @route   GET /api/products/
-// @access  Private
+// ?@desc    ADMIN | GET ALL PRODUCT WITHOUT SEARCH AND PAGINATION
+// ?@route   GET /api/products/
+// ?@access  Private
 
 const getAllProductByAdmin = asyncHandler(async (req, res) => {
   const products = await Product.find({}).sort({ id: -1 });
@@ -34,9 +35,9 @@ const getAllProductByAdmin = asyncHandler(async (req, res) => {
   res.json(products);
 });
 
-// @desc    ADMIN | DELETE PRODUCT BY ID
-// @route   DELETE /api/products/:id
-// @access  Private
+// ?@desc    ADMIN | DELETE PRODUCT BY ID
+// ?@route   DELETE /api/products/:id
+// ?@access  Private
 
 const deleteProductByAdmin = asyncHandler(async (req, res) => {
   const product = await Product.findById(req.params.id);
@@ -49,9 +50,9 @@ const deleteProductByAdmin = asyncHandler(async (req, res) => {
   }
 });
 
-// @desc    ADMIN | CREATE PRODUCT BY ID
-// @route   POST /api/products/create
-// @access  Private
+//? @desc    ADMIN | CREATE PRODUCT BY ID
+// ?@route   POST /api/products/create
+// ?@access  Private
 const createProductByAdmin = asyncHandler(async (req, res) => {
   // Declare Object need to be created
   const { name, price, description, image, countInStock } = req.body;

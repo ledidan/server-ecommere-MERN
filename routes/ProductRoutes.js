@@ -12,8 +12,8 @@ const {
 } = require("../controllers/ProductController");
 
 // [GET] ALL PRODUCT
-productRoute.get("/", getAllProduct);
 
+productRoute.get("/", getAllProduct);
 // ?[GET] GET ALL PRODUCT BY ADMIN
 productRoute.get("/all", protect, admin, getAllProductByAdmin);
 
