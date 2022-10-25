@@ -9,6 +9,7 @@ const productRoute = require("./routes/ProductRoutes");
 const userRouter = require("./routes/UserRoutes");
 const { errorHandler, notFound } = require("./middleware/Errors");
 const orderRouter = require("./routes/OrderRoutes");
+const categoryRouter = require("./routes/CategoryRoutes");
 // Config .env
 dotenv.config();
 // Connect DB
@@ -24,6 +25,7 @@ app.use(
 // LOAD API
 app.use("/api/import", ImportData);
 app.use("/api/products", productRoute);
+app.use("/api/categories", categoryRouter);
 app.use("/api/users", userRouter);
 app.use("/api/orders", orderRouter);
 app.get("/api/config/paypal", (req, res) => {

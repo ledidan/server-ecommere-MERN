@@ -1,6 +1,6 @@
 const asyncHandler = require("express-async-handler");
 const Product = require("../models/ProductModel");
-
+const Category = require("../models/CategoryModel");
 // @desc    get all product
 // @route   GET /api/products/
 // @access  Public
@@ -17,12 +17,11 @@ const getAllProduct = asyncHandler(async (req, res) => {
       }
     : {};
   const count = await Product.countDocuments({ ...keyword });
-  const productId = await Product.findById(req.params.id).exec();
   const products = await Product.find({ ...keyword })
     .limit(pageSize)
     .skip(pageSize * (page - 1))
     .sort({ _id: -1 });
-  res.json({ productId, products, page, pages: Math.ceil(count / pageSize) });
+  res.json({ products, page, pages: Math.ceil(count / pageSize) });
 });
 
 // ?@desc    ADMIN | GET ALL PRODUCT WITHOUT SEARCH AND PAGINATION
@@ -30,7 +29,7 @@ const getAllProduct = asyncHandler(async (req, res) => {
 // ?@access  Private
 
 const getAllProductByAdmin = asyncHandler(async (req, res) => {
-  const products = await Product.find({}).sort({ id: -1 });
+  const products = await Product.find({}).sort({ id: -1 }).populate("category");
 
   res.json(products);
 });
@@ -55,7 +54,10 @@ const deleteProductByAdmin = asyncHandler(async (req, res) => {
 // ?@access  Private
 const createProductByAdmin = asyncHandler(async (req, res) => {
   // Declare Object need to be created
-  const { name, price, description, image, countInStock } = req.body;
+  const categoryId = await Category.findById(req.body.category);
+  if (!categoryId) return res.status(400).json({ message: "Invalid Category" });
+
+  const { name, price, description, image, countInStock, category } = req.body;
 
   // ? Check Exist Product
   const productExist = await Product.findOne({ name });
@@ -68,6 +70,7 @@ const createProductByAdmin = asyncHandler(async (req, res) => {
     const product = new Product({
       name,
       price,
+      category,
       description,
       image,
       countInStock,
@@ -83,7 +86,9 @@ const createProductByAdmin = asyncHandler(async (req, res) => {
 });
 
 const updateProductByAdmin = asyncHandler(async (req, res) => {
-  const { name, price, description, image, countInStock } = req.body;
+  const categoryId = await Category.findById(req.body.category);
+  if (!categoryId) return res.status(400).json({ message: "Invalid Category" });
+  const { name, price, description, image, countInStock, category } = req.body;
 
   const product = await Product.findById(req.params.id);
 
@@ -94,7 +99,7 @@ const updateProductByAdmin = asyncHandler(async (req, res) => {
     product.description = description || product.description;
     product.image = image || product.image;
     product.countInStock = countInStock || product.countInStock;
-
+    product.category = category || product.category;
     const updateProduct = await product.save();
     res.status(201).json(updateProduct);
   } else {
