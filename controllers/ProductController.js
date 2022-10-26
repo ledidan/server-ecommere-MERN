@@ -18,6 +18,7 @@ const getAllProduct = asyncHandler(async (req, res) => {
     : {};
   const count = await Product.countDocuments({ ...keyword });
   const products = await Product.find({ ...keyword })
+    .populate("category")
     .limit(pageSize)
     .skip(pageSize * (page - 1))
     .sort({ _id: -1 });
@@ -29,7 +30,9 @@ const getAllProduct = asyncHandler(async (req, res) => {
 // ?@access  Private
 
 const getAllProductByAdmin = asyncHandler(async (req, res) => {
-  const products = await Product.find({}).sort({ id: -1 }).populate("category");
+  const products = await Product.find({})
+    .sort({ id: -1 })
+    .populate({ path: "category" });
 
   res.json(products);
 });
@@ -60,7 +63,7 @@ const createProductByAdmin = asyncHandler(async (req, res) => {
   const { name, price, description, image, countInStock, category } = req.body;
 
   // ? Check Exist Product
-  const productExist = await Product.findOne({ name });
+  const productExist = await Product.findOne({ name }).populate("category");
 
   if (productExist) {
     res.status(400);
@@ -90,7 +93,9 @@ const updateProductByAdmin = asyncHandler(async (req, res) => {
   if (!categoryId) return res.status(400).json({ message: "Invalid Category" });
   const { name, price, description, image, countInStock, category } = req.body;
 
-  const product = await Product.findById(req.params.id);
+  const product = await await Product.findById(req.params.id).populate(
+    "category"
+  );
 
   if (product) {
     // * Update by any object
@@ -113,7 +118,7 @@ const updateProductByAdmin = asyncHandler(async (req, res) => {
 // @access  Public
 
 const getSingleProduct = asyncHandler(async (req, res) => {
-  const product = await Product.findById(req.params.id);
+  const product = await Product.findById(req.params.id).populate("category");
   if (product) {
     res.json(product);
   } else {
@@ -163,6 +168,22 @@ const createProductReview = asyncHandler(async (req, res) => {
   }
 });
 
+const getProductByCategory = asyncHandler(async (req, res) => {
+  // localhost:4000/api/products?categories=7423674232
+  let filter = {};
+  if (req.query.categories) {
+    filter = { category: req.query.categories.split(",") };
+  }
+  const productList = await await Product.find(filter).populate("category");
+
+  if (productList) {
+    res.status(201).json(productList);
+  } else {
+    res.status(404);
+    throw new Error("Unable to find category");
+  }
+});
+
 module.exports = {
   getAllProduct,
   getSingleProduct,
@@ -171,4 +192,5 @@ module.exports = {
   deleteProductByAdmin,
   createProductByAdmin,
   updateProductByAdmin,
+  getProductByCategory,
 };

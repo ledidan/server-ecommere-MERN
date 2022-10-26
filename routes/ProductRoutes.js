@@ -9,6 +9,7 @@ const {
   deleteProductByAdmin,
   createProductByAdmin,
   updateProductByAdmin,
+  getProductByCategory,
 } = require("../controllers/ProductController");
 
 // [GET] ALL PRODUCT
@@ -25,6 +26,9 @@ productRoute.post("/create", protect, admin, createProductByAdmin);
 
 // ?[PUT] GET EDIT PRODUCT ID PAGE BY ADMIN
 productRoute.put("/:id", protect, admin, updateProductByAdmin);
+
+// [GET] Get Product By Category
+productRoute.get("/", getProductByCategory);
 
 // [GET] SINGLE PRODUCT
 productRoute.get("/:id", getSingleProduct);
