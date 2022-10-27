@@ -2,7 +2,7 @@ const express = require("express");
 const categoryRouter = express.Router();
 const { protect, admin } = require("../middleware/Auth");
 const {
-  getAllCategoriesByAdmin,
+  getAllCategories,
   createCategoriesByAdmin,
   deleteCategoryByAdmin,
   getSingleCategoryByAdmin,
@@ -10,7 +10,7 @@ const {
 } = require("../controllers/CategoryController");
 
 // [GET] ALL CATEGORIES
-categoryRouter.get("/", protect, admin, getAllCategoriesByAdmin);
+categoryRouter.get("/", getAllCategories);
 // [GET] SINGLE CATEGORY
 categoryRouter.get("/:id", protect, admin, getSingleCategoryByAdmin);
 // [POST] CREATE CATEGORY

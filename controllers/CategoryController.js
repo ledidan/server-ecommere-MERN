@@ -5,7 +5,7 @@ const Category = require("../models/CategoryModel");
 // ?@route   GET /api/categories/
 // ?@access  Private
 
-const getAllCategoriesByAdmin = asyncHandler(async (req, res) => {
+const getAllCategories = asyncHandler(async (req, res) => {
   const categories = await Category.find({});
   if (!categories) {
     res.status(500).json({ success: false });
@@ -65,7 +65,7 @@ const updateCategoryByAdmin = asyncHandler(async (req, res) => {
   }
 });
 module.exports = {
-  getAllCategoriesByAdmin,
+  getAllCategories,
   createCategoriesByAdmin,
   deleteCategoryByAdmin,
   getSingleCategoryByAdmin,
