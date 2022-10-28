@@ -28,6 +28,9 @@ const reviewsSchema = mongoose.Schema(
 
 const productSchema = mongoose.Schema(
   {
+    _id: {
+      type: mongoose.Schema.Types.ObjectId,
+    },
     name: {
       type: String,
       required: true,
@@ -66,7 +69,6 @@ const productSchema = mongoose.Schema(
     category: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Category",
-      required: true,
     },
   },
   {

@@ -7,6 +7,7 @@ const Category = require("../models/CategoryModel");
 
 const getAllCategories = asyncHandler(async (req, res) => {
   const categories = await Category.find({});
+
   if (!categories) {
     res.status(500).json({ success: false });
   }
@@ -40,12 +41,14 @@ const deleteCategoryByAdmin = asyncHandler(async (req, res) => {
 });
 
 const getSingleCategoryByAdmin = asyncHandler(async (req, res) => {
-  const singleCategory = await Category.findById(req.params.id);
+  const singleCategory = await Category.findById(req.params.id).populate(
+    "product"
+  );
   if (singleCategory) {
     res.status(201).json(singleCategory);
   } else {
     res.status(404);
-    throw new Error("Product Cannot Found");
+    throw new Error("Category Cannot Found");
   }
 });
 
