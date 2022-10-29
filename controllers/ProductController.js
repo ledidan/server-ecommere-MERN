@@ -26,7 +26,7 @@ const getAllProduct = asyncHandler(async (req, res) => {
 });
 
 const getAllProductByAdmin = asyncHandler(async (req, res) => {
-  const pageSize = 6;
+  const pageSize = 30;
   const page = Number(req.query.pageNumber || 1);
   const keyword = req.query.keyword
     ? {
