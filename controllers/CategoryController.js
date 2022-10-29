@@ -1,6 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const Category = require("../models/CategoryModel");
-
+const slugify = require("slugify");
+const Product = require("../models/ProductModel");
 // ?@desc    ADMIN | GET ALL CATEGORIES WITHOUT SEARCH AND PAGINATION
 // ?@route   GET /api/categories/
 // ?@access  Private
@@ -17,12 +18,14 @@ const getAllCategories = asyncHandler(async (req, res) => {
 const createCategoriesByAdmin = asyncHandler(async (req, res) => {
   const category = new Category({
     name: req.body.name,
-    image: req.body.image,
+    slug: slugify(req.body.name),
     description: req.body.description,
   });
   if (category) {
     const createCategory = await category.save();
     res.status(201).json(createCategory);
+  } else if (req.body.parentId) {
+    category.parentId = req.body.parentId;
   } else {
     res.status(400);
     throw new Error("The category cannot be created");
@@ -54,12 +57,11 @@ const getSingleCategoryByAdmin = asyncHandler(async (req, res) => {
 
 const updateCategoryByAdmin = asyncHandler(async (req, res) => {
   const category = await Category.findById(req.params.id);
-  const { name, image, description } = req.body;
+  const { name, description } = req.body;
   if (category) {
     category.name = name || category.name;
-    category.image = image || category.image;
+    category.slug = name || category.name;
     category.description = description || category.description;
-
     const updateCategory = await category.save();
     res.status(201).json(updateCategory);
   } else {
@@ -67,6 +69,7 @@ const updateCategoryByAdmin = asyncHandler(async (req, res) => {
     throw new Error("Category Not Found");
   }
 });
+
 module.exports = {
   getAllCategories,
   createCategoriesByAdmin,

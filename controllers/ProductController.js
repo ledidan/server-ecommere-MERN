@@ -25,16 +25,24 @@ const getAllProduct = asyncHandler(async (req, res) => {
   res.json({ products, page, pages: Math.ceil(count / pageSize) });
 });
 
-// ?@desc    ADMIN | GET ALL PRODUCT WITHOUT SEARCH AND PAGINATION
-// ?@route   GET /api/products/
-// ?@access  Private
-
 const getAllProductByAdmin = asyncHandler(async (req, res) => {
-  const products = await Product.find({})
-    .sort({ id: -1 })
-    .populate({ path: "category" });
-
-  res.json(products);
+  const pageSize = 6;
+  const page = Number(req.query.pageNumber || 1);
+  const keyword = req.query.keyword
+    ? {
+        name: {
+          $regex: req.query.keyword,
+          $options: "i",
+        },
+      }
+    : {};
+  const count = await Product.countDocuments({ ...keyword });
+  const products = await Product.find({ ...keyword })
+    .populate("category")
+    .limit(pageSize)
+    .skip(pageSize * (page - 1))
+    .sort({ _id: -1 });
+  res.json({ products, page, pages: Math.ceil(count / pageSize) });
 });
 
 // ?@desc    ADMIN | DELETE PRODUCT BY ID
@@ -169,13 +177,11 @@ const createProductReview = asyncHandler(async (req, res) => {
 });
 
 const getProductByCategory = asyncHandler(async (req, res) => {
-  // localhost:4000/api/products?categories=7423674232
   let filter = {};
   if (req.query.categories) {
     filter = { category: req.query.categories.split(",") };
   }
-  const productList = await await Product.find(filter).populate("category");
-
+  const productList = await Product.find(filter).populate("category");
   if (productList) {
     res.status(201).json(productList);
   } else {
@@ -188,9 +194,9 @@ module.exports = {
   getAllProduct,
   getSingleProduct,
   createProductReview,
-  getAllProductByAdmin,
   deleteProductByAdmin,
   createProductByAdmin,
   updateProductByAdmin,
   getProductByCategory,
+  getAllProductByAdmin,
 };
