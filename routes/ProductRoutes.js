@@ -12,8 +12,6 @@ const {
   getAllProductByAdmin,
 } = require("../controllers/ProductController");
 
-// GET ALL PRODUCT BY ADMIN
-productRoute.get("/all", protect, admin, getAllProductByAdmin);
 // ?[DELETE] DELETE PRODUCT ID BY ADMIN
 productRoute.delete("/:id/delete", protect, admin, deleteProductByAdmin);
 
@@ -23,6 +21,8 @@ productRoute.post("/create", protect, admin, createProductByAdmin);
 // ?[PUT] GET EDIT PRODUCT ID PAGE BY ADMIN
 productRoute.put("/:id", protect, admin, updateProductByAdmin);
 
+// GET ALL PRODUCT BY ADMIN
+productRoute.get("/all", protect, admin, getAllProductByAdmin);
 // [GET] SINGLE PRODUCT
 productRoute.get("/:id", getSingleProduct);
 

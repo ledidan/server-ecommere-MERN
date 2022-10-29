@@ -39,7 +39,7 @@ const deleteCategoryByAdmin = asyncHandler(async (req, res) => {
     await categoryId.remove();
   } else {
     res.status(404);
-    throw new Error("Category not Found");
+    throw new Error("Cannot delete category");
   }
 });
 
