@@ -28,8 +28,7 @@ productRoute.get("/:id", getSingleProduct);
 
 // [POST] REVIEW PRODUCT
 productRoute.post("/:id/review", protect, createProductReview);
-// [GET] Get Product By Category
-productRoute.get("/:categories", getProductByCategory);
+
 // [GET] ALL PRODUCT
 productRoute.get("/", getAllProduct);
 

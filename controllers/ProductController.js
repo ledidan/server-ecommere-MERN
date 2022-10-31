@@ -6,8 +6,10 @@ const Category = require("../models/CategoryModel");
 // @access  Public
 
 const getAllProduct = asyncHandler(async (req, res) => {
+  let filter = {};
   const pageSize = 6;
   const page = Number(req.query.pageNumber || 1);
+  const categories = req.query.categories;
   const keyword = req.query.keyword
     ? {
         name: {
@@ -16,8 +18,11 @@ const getAllProduct = asyncHandler(async (req, res) => {
         },
       }
     : {};
+  if (categories) {
+    filter = { category: categories.split(",") };
+  }
   const count = await Product.countDocuments({ ...keyword });
-  const products = await Product.find({ ...keyword })
+  const products = await Product.find({ ...keyword, ...filter })
     .populate("category")
     .limit(pageSize)
     .skip(pageSize * (page - 1))
@@ -38,6 +43,7 @@ const getAllProductByAdmin = asyncHandler(async (req, res) => {
     : {};
   const count = await Product.countDocuments({ ...keyword });
   const products = await Product.find({ ...keyword })
+    // .populate("category")
     .limit(pageSize)
     .skip(pageSize * (page - 1))
     .sort({ _id: -1 });
@@ -65,12 +71,11 @@ const deleteProductByAdmin = asyncHandler(async (req, res) => {
 const createProductByAdmin = asyncHandler(async (req, res) => {
   // Declare Object need to be created
   const categoryId = await Category.findById(req.body.category);
-  if (!categoryId) return res.status(400).json({ message: "Invalid Category" });
 
   const { name, price, description, image, countInStock, category } = req.body;
 
   // ? Check Exist Product
-  const productExist = await Product.findOne({ name }).populate("category");
+  const productExist = await Product.findOne({ name });
 
   if (productExist) {
     res.status(400);
@@ -85,11 +90,11 @@ const createProductByAdmin = asyncHandler(async (req, res) => {
       image,
       countInStock,
     });
-    if (product) {
+    if (product && categoryId) {
       const createProduct = await product.save();
       res.status(201).json(createProduct);
     } else {
-      res.status(400);
+      res.status(400).json({ message: "Invalid Category" });
       throw new Error("Invalid Product");
     }
   }
@@ -175,18 +180,51 @@ const createProductReview = asyncHandler(async (req, res) => {
   }
 });
 
-const getProductByCategory = asyncHandler(async (req, res) => {
-  let filter = {};
-  if (req.query.categories) {
-    filter = { category: req.query.categories.split(",") };
+const test = asyncHandler(async (req, res) => {
+  let sortBy = req.query.sortBy ? req.query.sortBy : "createdAt";
+  let sortByOrder = req.query.sortByOrder ? req.query.sortByOrder : "desc";
+  const categoryName = req.query.categoryName ? req.query.categoryName : "";
+  const page = Number(req.query.pageNumber) || 1;
+  const pageSize = 5;
+
+  const keyword = req.query.keyword
+    ? {
+        $or: [
+          { name: { $regex: req.query.keyword, $options: "i" } },
+          { description: { $regex: req.query.keyword, $options: "i" } },
+        ],
+      }
+    : {};
+
+  let count = await Product.countDocuments({ ...keyword });
+  await Product.find({ ...keyword })
+    .select("-photo")
+    .populate({
+      path: "category",
+      match: {
+        name: "Jacket",
+      },
+    })
+    .sort([[sortBy, sortByOrder]])
+    .limit(pageSize)
+    .skip(pageSize * (page - 1));
+  const products = products
+    .filter(function (product) {
+      return product.category;
+    })
+    .exec(err, products, (page = Number(req.query.pageNumber) || 1), pages);
+
+  if (err) {
+    return res.status(400).json({
+      error: "NO Product FOUND!",
+    });
   }
-  const productList = await Product.find(filter).populate("category");
-  if (productList) {
-    res.status(201).json(productList);
-  } else {
-    res.status(404);
-    throw new Error("Unable to find category");
-  }
+
+  res.json({
+    products,
+    page,
+    pages: Math.ceil(count / pageSize),
+  });
 });
 
 module.exports = {
@@ -196,6 +234,5 @@ module.exports = {
   deleteProductByAdmin,
   createProductByAdmin,
   updateProductByAdmin,
-  getProductByCategory,
   getAllProductByAdmin,
 };

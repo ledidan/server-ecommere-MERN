@@ -11,12 +11,13 @@ const categorySchema = mongoose.Schema(
       required: true,
       unique: true,
     },
-    parentId: {
-      type: String,
-    },
     description: {
       type: String,
       required: true,
+    },
+    product: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Product",
     },
   },
   {
