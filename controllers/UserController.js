@@ -110,13 +110,35 @@ const updateUserProfile = asyncHandler(async (req, res) => {
   }
 });
 
-// @desc    Get All Users
-// @route   GET /api/users/
-// @access  Private
+//* @desc    Get All Users
+//* @route   GET /api/users/
+//* @access  Private
 
 const getAllUsers = asyncHandler(async (req, res) => {
   const users = await User.find({});
   res.json(users);
+});
+
+//* @desc    Get All Users By Admin
+//* @route   GET /api/users/
+//* @access  Private
+const getAllUsersByAdmin = asyncHandler(async (req, res) => {
+  const pageSize = 6;
+  const page = Number(req.query.pageNumber || 1);
+  const keyword = req.query.keyword
+    ? {
+        name: {
+          $regex: req.query.keyword,
+          $options: "i",
+        },
+      }
+    : {};
+  const count = await User.countDocuments({ ...keyword });
+  const users = await User.find({})
+    .limit(pageSize)
+    .skip(pageSize * (page - 1))
+    .sort({ _id: -1 });
+  res.json({ users, page, pages: Math.ceil(count / pageSize) });
 });
 
 module.exports = {
@@ -125,4 +147,5 @@ module.exports = {
   getUserProfile,
   updateUserProfile,
   getAllUsers,
+  getAllUsersByAdmin,
 };

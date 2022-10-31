@@ -7,6 +7,7 @@ const {
   getUserProfile,
   updateUserProfile,
   getAllUsers,
+  getAllUsersByAdmin,
 } = require("../controllers/UserController");
 
 // [POST] GET ALL USERS

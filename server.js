@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const morgan = require("morgan");
+const path = require("path");
 const dotenv = require("dotenv");
 const bodyParser = require("body-parser");
 const connectDatabase = require("./config/MongoDB");
@@ -22,6 +23,7 @@ app.use(
     extended: true,
   })
 );
+app.use(express.static(path.join(__dirname, "/public")));
 // LOAD API
 app.use("/api/import", ImportData);
 app.use("/api/products", productRoute);
