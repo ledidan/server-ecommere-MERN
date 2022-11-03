@@ -8,6 +8,9 @@ const {
   getOrderByUser,
   getAllOrderByAdmin,
   updateDeliveredOrder,
+  deleteOrderIdByAdmin,
+  deleteOrderIdForce,
+  restoreOrderById,
 } = require("../controllers/OrderController");
 
 // ? GET ALL ORDER BY ADMIN
@@ -21,6 +24,18 @@ orderRouter.put("/:id/pay", protect, updateOrderPaid);
 
 // ? CHECK ORDER IS DELIVERED BY ADMIN
 orderRouter.put("/:id/delivered", protect, updateDeliveredOrder);
+
+// DELETE ORDER BY ID | ADMIN
+
+orderRouter.delete("/:id", protect, admin, deleteOrderIdByAdmin);
+
+// DELETE FORCE BY ID | ADMIN
+orderRouter.delete("/:id/force", protect, admin, deleteOrderIdForce);
+
+// RESTORE ORDER BY ID | ADMIN
+
+orderRouter.patch("/:id/restore", protect, admin, restoreOrderById);
+
 // CREATE ORDER
 orderRouter.post("/", protect, orderCreate);
 

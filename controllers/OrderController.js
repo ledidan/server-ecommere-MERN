@@ -1,6 +1,6 @@
 const asyncHandler = require("express-async-handler");
 const Order = require("../models/OrderModel");
-
+const { multipleMongooseToObject } = require("../utils/mongoose");
 // @desc    Create Order
 // @route   POST /api/orders
 // @access  Private
@@ -58,10 +58,16 @@ const getOrderById = asyncHandler(async (req, res) => {
 // @access  Private
 
 const getAllOrderByAdmin = asyncHandler(async (req, res) => {
-  const orders = await Order.find({})
+  const getAllOrder = await Order.find({})
     .sort({ _id: -1 })
     .populate("user", "id name email");
-  res.json(orders);
+
+  if (getAllOrder) {
+    res.json(getAllOrder);
+  } else {
+    res.status(404);
+    throw new Error("Order not Found");
+  }
 });
 
 // @desc    update order is paid & not paid
@@ -117,6 +123,46 @@ const getOrderByUser = asyncHandler(async (req, res) => {
   res.json(order);
 });
 
+// @desc    update order is paid & not paid
+// @route   DELETE /api/orders/:id/
+// @access  Private
+
+const deleteOrderIdByAdmin = asyncHandler(async (req, res) => {
+  const orderId = await Order.findById(req.params.id);
+
+  if (orderId) {
+    await orderId.remove();
+    res.json({ message: "Order deleted" });
+  } else {
+    res.status(404);
+    throw new Error("Order not Found");
+  }
+});
+
+// [DELETE]
+const deleteOrderIdForce = asyncHandler(async (req, res) => {
+  const orderId = await Order.findById(req.params.id);
+  if (orderId) {
+    await orderId.deleteOne();
+    res.json({ message: "Order is totally force deleted" });
+  } else {
+    res.status(404);
+    throw new Error("Order not Found");
+  }
+});
+
+// [PATCH]
+const restoreOrderById = asyncHandler(async (req, res, next) => {
+  const orderId = await Order.findById(req.params.id);
+  if (orderId) {
+    await orderId.restore();
+    res.json({ message: "Order successfully restored" });
+  } else {
+    res.status(404);
+    throw new Error("Order not Found");
+  }
+});
+
 module.exports = {
   orderCreate,
   getOrderById,
@@ -124,4 +170,7 @@ module.exports = {
   getOrderByUser,
   getAllOrderByAdmin,
   updateDeliveredOrder,
+  deleteOrderIdByAdmin,
+  deleteOrderIdForce,
+  restoreOrderById,
 };
