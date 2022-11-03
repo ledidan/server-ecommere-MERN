@@ -180,53 +180,6 @@ const createProductReview = asyncHandler(async (req, res) => {
   }
 });
 
-const test = asyncHandler(async (req, res) => {
-  let sortBy = req.query.sortBy ? req.query.sortBy : "createdAt";
-  let sortByOrder = req.query.sortByOrder ? req.query.sortByOrder : "desc";
-  const categoryName = req.query.categoryName ? req.query.categoryName : "";
-  const page = Number(req.query.pageNumber) || 1;
-  const pageSize = 5;
-
-  const keyword = req.query.keyword
-    ? {
-        $or: [
-          { name: { $regex: req.query.keyword, $options: "i" } },
-          { description: { $regex: req.query.keyword, $options: "i" } },
-        ],
-      }
-    : {};
-
-  let count = await Product.countDocuments({ ...keyword });
-  await Product.find({ ...keyword })
-    .select("-photo")
-    .populate({
-      path: "category",
-      match: {
-        name: "Jacket",
-      },
-    })
-    .sort([[sortBy, sortByOrder]])
-    .limit(pageSize)
-    .skip(pageSize * (page - 1));
-  const products = products
-    .filter(function (product) {
-      return product.category;
-    })
-    .exec(err, products, (page = Number(req.query.pageNumber) || 1), pages);
-
-  if (err) {
-    return res.status(400).json({
-      error: "NO Product FOUND!",
-    });
-  }
-
-  res.json({
-    products,
-    page,
-    pages: Math.ceil(count / pageSize),
-  });
-});
-
 module.exports = {
   getAllProduct,
   getSingleProduct,
