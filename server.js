@@ -4,6 +4,7 @@ const morgan = require("morgan");
 const path = require("path");
 const dotenv = require("dotenv");
 const bodyParser = require("body-parser");
+const cors = require("cors");
 const connectDatabase = require("./config/MongoDB");
 const ImportData = require("./ImportData.js");
 const productRoute = require("./routes/ProductRoutes");
@@ -11,6 +12,7 @@ const userRouter = require("./routes/UserRoutes");
 const { errorHandler, notFound } = require("./middleware/Errors");
 const orderRouter = require("./routes/OrderRoutes");
 const categoryRouter = require("./routes/CategoryRoutes");
+const contactRouter = require("./routes/ContactRoutes");
 // Config .env
 dotenv.config();
 // Connect DB
@@ -23,13 +25,15 @@ app.use(
     extended: true,
   })
 );
+app.use(cors({ origin: `${process.env.CLIENT_URL}` }));
 app.use(express.static(path.join(__dirname, "/public")));
 // LOAD API
-app.use("/api/import", ImportData);
-app.use("/api/products", productRoute);
-app.use("/api/categories", categoryRouter);
-app.use("/api/users", userRouter);
-app.use("/api/orders", orderRouter);
+app.use("/api/v1/import", ImportData);
+app.use("/api/v1/products", productRoute);
+app.use("/api/v1/categories", categoryRouter);
+app.use("/api/v1/users", userRouter);
+app.use("/api/v1/orders", orderRouter);
+app.use("/api/v1/contact", contactRouter);
 app.get("/api/config/paypal", (req, res) => {
   res.send(process.env.PAYPAL_CLIENT_ID);
 });
