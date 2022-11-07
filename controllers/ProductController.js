@@ -9,7 +9,7 @@ const getAllProduct = asyncHandler(async (req, res) => {
   let filter = {};
   const pageSize = 6;
   const page = Number(req.query.pageNumber || 1);
-  const categories = req.query.categories;
+  const categoryId = req.query.categoryId;
   const keyword = req.query.keyword
     ? {
         name: {
@@ -18,8 +18,8 @@ const getAllProduct = asyncHandler(async (req, res) => {
         },
       }
     : {};
-  if (categories) {
-    filter = { category: categories.split(",") };
+  if (categoryId) {
+    filter = { category: categoryId.split(",") };
   }
   const count = await Product.countDocuments({ ...keyword });
   const products = await Product.find({ ...keyword, ...filter })
