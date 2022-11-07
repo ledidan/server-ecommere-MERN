@@ -127,7 +127,7 @@ const getOrderByUser = asyncHandler(async (req, res) => {
 // @route   DELETE /api/orders/:id/
 // @access  Private
 
-const deleteOrderIdByAdmin = asyncHandler(async (req, res) => {
+const deleteOrderId = asyncHandler(async (req, res) => {
   const orderId = await Order.findById(req.params.id);
 
   if (orderId) {
@@ -170,7 +170,7 @@ module.exports = {
   getOrderByUser,
   getAllOrderByAdmin,
   updateDeliveredOrder,
-  deleteOrderIdByAdmin,
+  deleteOrderId,
   deleteOrderIdForce,
   restoreOrderById,
 };

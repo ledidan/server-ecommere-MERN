@@ -8,7 +8,7 @@ const {
   getOrderByUser,
   getAllOrderByAdmin,
   updateDeliveredOrder,
-  deleteOrderIdByAdmin,
+  deleteOrderId,
   deleteOrderIdForce,
   restoreOrderById,
 } = require("../controllers/OrderController");
@@ -27,7 +27,7 @@ orderRouter.put("/:id/delivered", protect, updateDeliveredOrder);
 
 // DELETE ORDER BY ID | ADMIN
 
-orderRouter.delete("/:id", protect, admin, deleteOrderIdByAdmin);
+orderRouter.delete("/:id", protect, deleteOrderId);
 
 // DELETE FORCE BY ID | ADMIN
 orderRouter.delete("/:id/force", protect, admin, deleteOrderIdForce);
