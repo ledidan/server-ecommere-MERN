@@ -144,7 +144,7 @@ const deleteOrderIdForce = asyncHandler(async (req, res) => {
   const orderId = await Order.findById(req.params.id);
   if (orderId) {
     await orderId.deleteOne();
-    res.json({ message: "Order is totally force deleted" });
+    res.json({ message: "Order is totally force deleted", order: {} });
   } else {
     res.status(404);
     throw new Error("Order not Found");
