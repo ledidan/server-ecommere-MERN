@@ -10,8 +10,9 @@ const {
 } = require("../controllers/CategoryController");
 
 // [GET] ALL CATEGORIES
-// [GET] SINGLE CATEGORY
+
 categoryRouter.get("/", getAllCategories);
+// [GET] SINGLE CATEGORY
 categoryRouter.get("/:id", protect, admin, getSingleCategoryByAdmin);
 // [POST] CREATE CATEGORY
 categoryRouter.post("/", protect, admin, createCategoriesByAdmin);
