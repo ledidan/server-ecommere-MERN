@@ -25,7 +25,7 @@ app.use(
     extended: true,
   })
 );
-app.use(cors({ origin: `${process.env.CLIENT_URL}` }));
+app.use(cors());
 app.use(express.static(path.join(__dirname, "/public")));
 // LOAD API
 app.use("/api/v1/import", ImportData);
