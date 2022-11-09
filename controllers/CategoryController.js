@@ -7,7 +7,7 @@ const Product = require("../models/ProductModel");
 // ?@access  Private
 
 const getAllCategories = asyncHandler(async (req, res) => {
-  const categories = await Category.find().populate("product");
+  const categories = await Category.find({}).populate("product");
 
   if (!categories) {
     res.status(500).json({ success: false });
