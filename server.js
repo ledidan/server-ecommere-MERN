@@ -31,7 +31,6 @@ app.use(
 );
 app.use(
   cors({
-    origin: process.env.CLIENT_URL_VERCEL,
     methods: "GET,POST,PUT,DELETE",
     credentials: true,
   })
