@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
+const findOrCreate = require("mongoose-findorcreate");
 const userSchema = mongoose.Schema(
   {
     name: {
@@ -8,22 +9,19 @@ const userSchema = mongoose.Schema(
     },
     email: {
       type: String,
-      required: true,
+      required: false,
       unique: true,
     },
     password: {
       type: String,
-      required: true,
-    },
-    phone: {
-      type: Number,
-      required: true,
+      required: false,
     },
     isAdmin: {
       type: Boolean,
       required: true,
       default: false,
     },
+    googleId: { type: Number, required: false },
   },
   {
     timestamps: true,
@@ -43,7 +41,7 @@ userSchema.pre("save", async function (next) {
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
 });
-
+userSchema.plugin(findOrCreate);
 const User = mongoose.model("User", userSchema);
 
 module.exports = User;

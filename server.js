@@ -13,6 +13,10 @@ const { errorHandler, notFound } = require("./middleware/Errors");
 const orderRouter = require("./routes/OrderRoutes");
 const categoryRouter = require("./routes/CategoryRoutes");
 const contactRouter = require("./routes/ContactRoutes");
+const passport = require("passport");
+const cookieSession = require("cookie-session");
+const OAuth2Router = require("./routes/OAuth2Routes");
+require("./middleware/Passport");
 // Config .env
 dotenv.config();
 // Connect DB
@@ -25,7 +29,19 @@ app.use(
     extended: true,
   })
 );
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    methods: "GET,POST,PUT,DELETE",
+    credentials: true,
+  })
+);
+app.use(
+  cookieSession({ name: "session", keys: ["bon"], maxAge: 24 * 60 * 80 * 1000 })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
 app.use(express.static(path.join(__dirname, "/public")));
 // LOAD API
 app.use("/api/v1/import", ImportData);
@@ -34,6 +50,7 @@ app.use("/api/v1/categories", categoryRouter);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/orders", orderRouter);
 app.use("/api/v1/contact", contactRouter);
+app.use("/auth", OAuth2Router);
 app.get("/api/config/paypal", (req, res) => {
   res.send(process.env.PAYPAL_CLIENT_ID);
 });
