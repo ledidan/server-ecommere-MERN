@@ -12,7 +12,7 @@ const googleAuth = passport.use(
     {
       clientID: GOOGLE_CLIENT_ID,
       clientSecret: GOOGLE_CLIENT_SECRET,
-      callbackURL: `${process.env.REACT_APP_URL_SERVER}/auth/google/callback`,
+      callbackURL: `/auth/google/callback`,
     },
     (accessToken, refreshToken, profile, done) => {
       // check if user already exists in our db
