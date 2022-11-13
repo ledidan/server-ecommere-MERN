@@ -27,7 +27,7 @@ OAuth2Router.get("/login/failed", (req, res) => {
 });
 
 OAuth2Router.get(
-  "/google",
+  "'/auth/google'",
   passport.authenticate("google", { scope: ["profile", "email"] })
 );
 
