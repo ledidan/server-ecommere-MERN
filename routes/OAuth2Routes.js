@@ -2,7 +2,7 @@ const express = require("express");
 const OAuth2Router = express.Router();
 const passport = require("passport");
 
-const CLIENT_URL = "https://shop-client-danz.vercel.app";
+const CLIENT_URL = "http://localhost:3000";
 
 OAuth2Router.get("/login/success", (req, res) => {
   if (req.user) {
