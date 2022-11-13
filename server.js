@@ -31,7 +31,7 @@ app.use(
 );
 app.use(
   cors({
-    origin: "http://shop-client-danz.vercel.app",
+    origin: "*",
     methods: "GET,POST,PUT,DELETE",
     credentials: true,
   })
