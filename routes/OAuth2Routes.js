@@ -2,14 +2,15 @@ const express = require("express");
 const OAuth2Router = express.Router();
 const passport = require("passport");
 
-const CLIENT_URL = "http://localhost:3000";
-
 OAuth2Router.get("/login/success", (req, res) => {
-  res.status(200).json({
-    success: true,
-    message: "successfully access",
-    user: req.user,
-  });
+  if (req.user) {
+    res.status(200).json({
+      success: true,
+      message: "successfull",
+      user: req.user,
+      cookies: req.cookies,
+    });
+  }
 });
 
 OAuth2Router.get("/login/failed", (req, res) => {
@@ -19,36 +20,48 @@ OAuth2Router.get("/login/failed", (req, res) => {
   });
 });
 
+OAuth2Router.get("/logout", (req, res) => {
+  req.logout();
+  res.redirect(process.env.CLIENT_URL_VERCEL);
+});
+
 OAuth2Router.get(
   "/google",
-  passport.authenticate("google", { scope: ["profile", "email"] })
+  passport.authenticate("google", { scope: ["profile"] })
 );
 
 OAuth2Router.get(
   "/google/callback",
   passport.authenticate("google", {
-    successRedirect: CLIENT_URL,
-    failureRedirect: "/login/failed",
+    successRedirect: process.env.CLIENT_URL_VERCEL,
+    failureRedirect: `${process.env.CLIENT_URL_VERCEL}/login`,
   })
 );
 
-OAuth2Router.get("/logout", (req, res) => {
-  req.logout();
-  req.session.destroy(function (err) {
-    if (!err) {
-      res
-        .status(200)
-        .clearCookie("connect.sid", { path: "/" })
-        .json({ status: "Success" });
-    } else {
-      // handle error case...
-      res.status(403).json({ message: "failed to logout" });
-    }
-  });
-  // req.session.destroy((e) => {
-  //   req.logout();
-  //   res.redirect(CLIENT_URL);
-  // });
-});
+// GITHUB
+OAuth2Router.get(
+  "/github",
+  passport.authenticate("github", { scope: ["profile", "email"] })
+);
 
+OAuth2Router.get(
+  "/github/callback",
+  passport.authenticate("github", {
+    successRedirect: process.env.CLIENT_URL_VERCEL,
+    failureRedirect: `${process.env.CLIENT_URL_VERCEL}/login`,
+  })
+);
+
+OAuth2Router.get(
+  "/facebook",
+  passport.authenticate("facebook", { scope: ["profile", "email"] })
+);
+
+OAuth2Router.get(
+  "/facebook/callback",
+  passport.authenticate("facebook", {
+    successRedirect: process.env.CLIENT_URL_VERCEL,
+    failureRedirect: `${process.env.CLIENT_URL_VERCEL}/login`,
+  })
+);
 module.exports = OAuth2Router;

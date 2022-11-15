@@ -2,8 +2,8 @@ const express = require("express");
 const app = express();
 const morgan = require("morgan");
 const path = require("path");
-const dotenv = require("dotenv");
 const bodyParser = require("body-parser");
+require("dotenv").config();
 const cors = require("cors");
 const connectDatabase = require("./config/MongoDB");
 const ImportData = require("./ImportData.js");
@@ -17,8 +17,6 @@ const passport = require("passport");
 const cookieSession = require("cookie-session");
 const OAuth2Router = require("./routes/OAuth2Routes");
 require("./middleware/Passport");
-// Config .env
-dotenv.config();
 // Connect DB
 connectDatabase();
 
@@ -31,17 +29,22 @@ app.use(
 );
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: `${process.env.CLIENT_URL_VERCEL}`,
     methods: "GET,POST,PUT,DELETE",
     credentials: true,
   })
 );
 app.use(
-  cookieSession({ name: "session", keys: ["bon"], maxAge: 24 * 60 * 80 * 1000 })
+  cookieSession({
+    name: "session",
+    keys: ["bon"],
+    maxAge: 24 * 60 * 80 * 1000,
+  })
 );
 
 app.use(passport.initialize());
 app.use(passport.session());
+
 app.use(express.static(path.join(__dirname, "/public")));
 // LOAD API
 app.use("/api/v1/import", ImportData);
