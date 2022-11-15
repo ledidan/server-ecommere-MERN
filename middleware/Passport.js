@@ -9,7 +9,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: `/auth/google/callback`,
+      callbackURL: `${process.env.REACT_APP_URL_SERVER}/auth/google/callback`,
     },
     (accessToken, refreshToken, profile, done) => {
       // check if user already exists in our db
@@ -31,7 +31,7 @@ passport.use(
     {
       clientID: process.env.GITHUB_CLIENT_ID,
       clientSecret: process.env.GITHUB_CLIENT_SECRET,
-      callbackURL: `/auth/github/callback`,
+      callbackURL: `${process.env.REACT_APP_URL_SERVER}/auth/github/callback`,
     },
     (accessToken, refreshToken, profile, done) => {
       // check if user already exists in our db
@@ -53,7 +53,7 @@ passport.use(
     {
       clientID: process.env.FACEBOOK_APP_ID,
       clientSecret: process.env.FACEBOOK_APP_SECRET,
-      callbackURL: `/auth/facebook/callback`,
+      callbackURL: `${process.env.REACT_APP_URL_SERVER}/auth/facebook/callback`,
     },
     (accessToken, refreshToken, profile, done) => {
       // check if user already exists in our db
