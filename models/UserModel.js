@@ -9,12 +9,12 @@ const userSchema = mongoose.Schema(
     },
     email: {
       type: String,
-      required: true,
+      required: false,
       unique: false,
     },
     password: {
       type: String,
-      required: true,
+      required: false,
       unique: false,
     },
     isAdmin: {
