@@ -32,6 +32,7 @@ const allowedDomains = [
   process.env.CLIENT_URL_VERCEL,
   process.env.ADMIN_URL_VERCEL,
   process.env.CLIENT_URL,
+  process.env.ADMIN_URL,
 ];
 
 app.use(
