@@ -12,13 +12,12 @@ const getAllCategories = asyncHandler(async (req, res) => {
   if (!categories) {
     res.status(500).json({ success: false });
   }
-  res.json(categories);
+  res.status(200).json(categories);
 });
 
 const createCategoriesByAdmin = asyncHandler(async (req, res) => {
   const category = new Category({
     name: req.body.name,
-    slug: slugify(req.body.name),
     description: req.body.description,
   });
   if (category) {
