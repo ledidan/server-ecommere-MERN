@@ -67,9 +67,9 @@ const deleteProductByAdmin = asyncHandler(async (req, res) => {
 const createProductByAdmin = asyncHandler(async (req, res) => {
   // Declare Object need to be created
   const { name, price, description, image, countInStock, category } = req.body;
-  const categoryFound = await Category.findById({ _id: category });
+  const categoryFound = await Category.findById(req.body.category);
 
-  if (categoryFound) {
+  if (!categoryFound) {
     return res.status(400).json({ message: "Category Not Found" });
   }
 

@@ -16,18 +16,21 @@ const getAllCategories = asyncHandler(async (req, res) => {
 });
 
 const createCategoriesByAdmin = asyncHandler(async (req, res) => {
-  const category = new Category({
-    name: req.body.name,
-    description: req.body.description,
-  });
-  if (category) {
-    const createCategory = await category.save();
-    res.status(201).json(createCategory);
-  } else if (req.body.parentId) {
-    category.parentId = req.body.parentId;
-  } else {
-    res.status(400);
-    throw new Error("The category cannot be created");
+  try {
+    const { name, description } = req.body;
+    const usedCategory = await Category.findOne({ name: name });
+    if (usedCategory) {
+      return res.status(400).json({ message: "Category already exists" });
+    }
+
+    let categoryFields = {};
+    if (name) categoryFields.name = name;
+    if (description) categoryFields.description = description;
+
+    const newCategory = await new Category(categoryFields).save();
+    res.json(newCategory);
+  } catch (error) {
+    return res.status(400).json({ message: "Category couldn't be created" });
   }
 });
 const deleteCategoryByAdmin = asyncHandler(async (req, res) => {
