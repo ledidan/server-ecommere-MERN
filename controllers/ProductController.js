@@ -115,7 +115,7 @@ const updateProductByAdmin = asyncHandler(async (req, res) => {
       product.description = description || product.description;
       product.image = image || product.image;
       product.countInStock = countInStock || product.countInStock;
-      product.category = category || categoryFound.name;
+      product.category = category || product.categoryFound.name;
       const updateProduct = await product.save();
       res.status(201).json(updateProduct);
     }
