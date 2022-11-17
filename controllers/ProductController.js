@@ -19,7 +19,7 @@ const getAllProduct = asyncHandler(async (req, res) => {
     "category",
     "name"
   );
-  res.json({ products });
+  res.json(products);
 });
 
 const getAllProductByAdmin = asyncHandler(async (req, res) => {
