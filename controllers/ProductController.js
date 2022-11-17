@@ -6,8 +6,6 @@ const Category = require("../models/CategoryModel");
 // @access  Public
 
 const getAllProduct = asyncHandler(async (req, res) => {
-  const pageSize = 6;
-  const page = Number(req.query.pageNumber || 1);
   const category = req.query.category ? { category: req.query.category } : {};
   const keyword = req.query.keyword
     ? {
@@ -17,13 +15,11 @@ const getAllProduct = asyncHandler(async (req, res) => {
         },
       }
     : {};
-  const count = await Product.countDocuments({ ...keyword });
-  const products = await Product.find({ ...keyword, ...category })
-    .populate("category", "name")
-    .limit(pageSize)
-    .skip(pageSize * (page - 1))
-    .sort({ _id: -1 });
-  res.json({ products, page, pages: Math.ceil(count / pageSize) });
+  const products = await Product.find({ ...keyword, ...category }).populate(
+    "category",
+    "name"
+  );
+  res.json({ products });
 });
 
 const getAllProductByAdmin = asyncHandler(async (req, res) => {
