@@ -100,23 +100,22 @@ const createProductByAdmin = asyncHandler(async (req, res) => {
 });
 
 const updateProductByAdmin = asyncHandler(async (req, res) => {
-  const { name, price, description, image, countInStock, categoryId } =
-    req.body;
+  const { name, price, description, image, countInStock, category } = req.body;
   if (!name || !description || !price || !countInStock) {
     res.status(400).json({ message: "All fields required." });
   }
   const product = await Product.findById(req.params.id).populate("category");
 
   if (product) {
-    if (categoryId) {
+    if (category) {
       // * Update by any object
-      let categoryFound = await Category.findById({ _id: categoryId });
+      let categoryFound = await Category.findById(req.body.category);
       product.name = name || product.name;
       product.price = price || product.price;
       product.description = description || product.description;
       product.image = image || product.image;
       product.countInStock = countInStock || product.countInStock;
-      product.category = categoryFound.name;
+      product.category = category || categoryFound.name;
       const updateProduct = await product.save();
       res.status(201).json(updateProduct);
     }
