@@ -9,8 +9,8 @@ const {
   createProductByAdmin,
   updateProductByAdmin,
   getAllProductByAdmin,
-  listProductRelated,
   productListCategory,
+  filteredProducts,
 } = require("../controllers/ProductController");
 
 // ?[DELETE] DELETE PRODUCT ID BY ADMIN
@@ -26,7 +26,6 @@ productRoute.put("/:id", protect, admin, updateProductByAdmin);
  * it will find the products based on the req product category
  * other products that has the same category, will be returned
  */
-productRoute.get("/related/:productId", listProductRelated);
 productRoute.get("/categories", productListCategory);
 // GET ALL PRODUCT BY ADMIN
 productRoute.get("/all", protect, admin, getAllProductByAdmin);
@@ -35,6 +34,8 @@ productRoute.get("/:id", getSingleProduct);
 
 // [POST] REVIEW PRODUCT
 productRoute.post("/:id/review", protect, createProductReview);
+
+productRoute.post("/search", filteredProducts);
 
 // [GET] ALL PRODUCT
 productRoute.get("/", getAllProduct);
