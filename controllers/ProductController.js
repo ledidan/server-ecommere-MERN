@@ -23,7 +23,7 @@ const getAllProduct = asyncHandler(async (req, res) => {
 });
 
 const getAllProductByAdmin = asyncHandler(async (req, res) => {
-  const pageSize = 100;
+  const pageSize = 12;
   const page = Number(req.query.pageNumber || 1);
   const keyword = req.query.keyword
     ? {
@@ -62,15 +62,15 @@ const deleteProductByAdmin = asyncHandler(async (req, res) => {
 // ?@access  Private
 const createProductByAdmin = asyncHandler(async (req, res) => {
   // Declare Object need to be created
-  const categoryFound = await Category.findById(req.body.category);
+  const { name, price, description, image, countInStock } = req.body;
 
+  const categoryFound = await Category.findById(req.params.id);
   if (categoryFound) {
     return res.status(400).json({ message: "Category Not Found" });
   }
-  const { name, price, description, image, countInStock, category } = req.body;
 
   // ? Check Exist Product
-  const productExist = await Product.findOne({ name });
+  const productExist = await Product.findOne({ name: name });
 
   if (productExist) {
     res.status(400);
@@ -87,7 +87,9 @@ const createProductByAdmin = asyncHandler(async (req, res) => {
     });
     if (product) {
       const createProduct = await product.save();
-      res.status(201).json(createProduct);
+      if (createProduct) {
+        return res.status(201).json(createProduct);
+      }
     } else {
       res.status(400).json({ message: "Invalid Category" });
       throw new Error("Invalid Product");
@@ -109,7 +111,7 @@ const updateProductByAdmin = asyncHandler(async (req, res) => {
     product.description = description || product.description;
     product.image = image || product.image;
     product.countInStock = countInStock || product.countInStock;
-    product.category = category || category.name;
+    product.category = category || product.category.name;
     const updateProduct = await product.save();
     res.status(201).json(updateProduct);
   } else {
