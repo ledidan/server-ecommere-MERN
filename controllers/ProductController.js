@@ -19,7 +19,11 @@ const getAllProduct = asyncHandler(async (req, res) => {
     "category",
     "name"
   );
-  res.json(products);
+  if (products) {
+    return res.status(200).json(products);
+  } else {
+    return res.status(400).json({ message: "No Products Available" });
+  }
 });
 
 const getAllProductByAdmin = asyncHandler(async (req, res) => {
@@ -62,10 +66,17 @@ const deleteProductByAdmin = asyncHandler(async (req, res) => {
 // ?@access  Private
 const createProductByAdmin = asyncHandler(async (req, res) => {
   // Declare Object need to be created
+<<<<<<< HEAD
   const { name, price, description, image, countInStock } = req.body;
 
   const categoryFound = await Category.findById(req.params.id);
   if (categoryFound) {
+=======
+  const { name, price, description, image, countInStock, category } = req.body;
+  const categoryFound = await Category.findById(req.body.category);
+
+  if (!categoryFound) {
+>>>>>>> a0a675eeb869e6bf183a79ad00c425c21bf1499e
     return res.status(400).json({ message: "Category Not Found" });
   }
 
@@ -98,22 +109,25 @@ const createProductByAdmin = asyncHandler(async (req, res) => {
 });
 
 const updateProductByAdmin = asyncHandler(async (req, res) => {
-  const categoryId = await Category.findById(req.body.category);
-  if (!categoryId) return res.status(400).json({ message: "Invalid Category" });
   const { name, price, description, image, countInStock, category } = req.body;
-
+  if (!name || !description || !price || !countInStock) {
+    res.status(400).json({ message: "All fields required." });
+  }
   const product = await Product.findById(req.params.id).populate("category");
 
   if (product) {
-    // * Update by any object
-    product.name = name || product.name;
-    product.price = price || product.price;
-    product.description = description || product.description;
-    product.image = image || product.image;
-    product.countInStock = countInStock || product.countInStock;
-    product.category = category || product.category.name;
-    const updateProduct = await product.save();
-    res.status(201).json(updateProduct);
+    if (category) {
+      // * Update by any object
+      let categoryFound = await Category.findById(req.body.category);
+      product.name = name || product.name;
+      product.price = price || product.price;
+      product.description = description || product.description;
+      product.image = image || product.image;
+      product.countInStock = countInStock || product.countInStock;
+      product.category = categoryFound || categoryFound.name;
+      const updateProduct = await product.save();
+      res.status(201).json(updateProduct);
+    }
   } else {
     res.status(400);
     throw new Error("Product Not Found");
