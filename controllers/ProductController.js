@@ -106,14 +106,14 @@ const updateProductByAdmin = asyncHandler(async (req, res) => {
 
   if (product) {
     // if (categoryId) {
-    let categoryFound = await Category.findById(req.body.category);
+    let categoryFound = await Category.findOne({ name: req.body.category });
     // * Update by any object
     product.name = name || product.name;
     product.price = price || product.price;
     product.description = description || product.description;
     product.image = image || product.image;
     product.countInStock = countInStock || product.countInStock;
-    product.category = categoryFound.name || product.category;
+    product.category = categoryFound.name || product.category.name;
     const updateProduct = await product.save();
     res.status(201).json(updateProduct);
     // }
