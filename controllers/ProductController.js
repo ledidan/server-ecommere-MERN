@@ -15,10 +15,7 @@ const getAllProduct = asyncHandler(async (req, res) => {
         },
       }
     : {};
-  const products = await Product.find({ ...keyword, ...category }).populate(
-    "category",
-    "name"
-  );
+  const products = await Product.find({ ...keyword, ...category });
   if (products) {
     return res.status(200).json(products);
   } else {
@@ -39,7 +36,7 @@ const getAllProductByAdmin = asyncHandler(async (req, res) => {
     : {};
   const count = await Product.countDocuments({ ...keyword });
   const products = await Product.find({ ...keyword })
-    // .populate("category")
+    .populate("category")
     .limit(pageSize)
     .skip(pageSize * (page - 1))
     .sort({ _id: -1 });
@@ -104,24 +101,22 @@ const createProductByAdmin = asyncHandler(async (req, res) => {
 const updateProductByAdmin = asyncHandler(async (req, res) => {
   const { name, price, description, image, countInStock, categoryId } =
     req.body;
-  if (!name || !description || !price || !countInStock) {
-    res.status(400).json({ message: "All fields required." });
-  }
-  const product = await Product.findById(req.params.id);
+
+  const product = await Product.findById(req.params.id).populate("category");
 
   if (product) {
-    if (categoryId) {
-      // * Update by any object
-      let categoryFound = await Category.findById({ _id: categoryId });
-      product.name = name || product.name;
-      product.price = price || product.price;
-      product.description = description || product.description;
-      product.image = image || product.image;
-      product.countInStock = countInStock || product.countInStock;
-      product.category = categoryFound.name;
-      const updateProduct = await product.save();
-      res.status(201).json(updateProduct);
-    }
+    // if (categoryId) {
+    let categoryFound = await Category.findById(req.body.category);
+    // * Update by any object
+    product.name = name || product.name;
+    product.price = price || product.price;
+    product.description = description || product.description;
+    product.image = image || product.image;
+    product.countInStock = countInStock || product.countInStock;
+    product.category = categoryFound.name || product.category;
+    const updateProduct = await product.save();
+    res.status(201).json(updateProduct);
+    // }
   } else {
     res.status(400);
     throw new Error("Product Not Found");
