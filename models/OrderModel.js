@@ -45,6 +45,10 @@ const orderSchema = mongoose.Schema(
         type: String,
         required: true,
       },
+      phoneNumber: {
+        type: Number,
+        required: true,
+      },
       country: {
         type: String,
         required: true,
